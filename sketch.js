@@ -19,11 +19,13 @@ var quadra, quadraIMG;
 var arremessador, arremessadorIMG;
 var obstaculo;
 var cannon;
+var balls = []
 
 function preload() {
   quadraIMG = loadImage("quadra.jpg")
   cestaIMG = loadImage("cesta.png")
   arremessadorIMG = loadImage("arremessador.png")
+  // ballIMG = loadImage("ball.png")
 }
 
 function setup() {
@@ -45,7 +47,7 @@ function setup() {
     restitution: 0.85
   }
 
-  cesta = createSprite(width - 1360, height - 390, 40, 40)
+  cesta = createSprite(width - 1350, height - 390, 40, 40)
   cesta.addImage(cestaIMG)
   cesta.scale = 0.2
 
@@ -64,7 +66,8 @@ function setup() {
   wedge = Bodies.rectangle(100, 200, 100, 20, ground_options);
   World.add(world, wedge);
 
-cannon = new Cannon(width - 340, height - 390)
+
+  cannon = new Cannon(width - 480, height - 390, 100, 100)
 
   rectMode(CENTER);
   ellipseMode(RADIUS);
@@ -94,8 +97,39 @@ function draw() {
 
   drawSprites()
 
+  for (var i = 0; i < balls.length; i++) {
+
+    showCannonballs(balls[i], i);
+  }
 
 
   cannon.display()
 }
 
+function showCannonballs(ball, index) {
+  if (ball) {
+    ball.display();
+    ball.animate();
+    if (ball.body.position.x < width) {
+      ball.remove(index);
+
+    }
+  }
+
+}
+
+function keyPressed() {
+  if (keyCode === DOWN_ARROW) {
+    var ball_1 = new CannonBall(cannon.x, cannon.y);
+    ball_1.trajectory = []
+    Matter.Body.setAngle(ball_1.body, ball_1.angle);
+    balls.push(ball_1)
+  }
+
+}
+
+function keyRelased() {
+  if (keyCode === DOWN_ARROW) {
+    balls[balls.length - 1].shoot()
+  }
+}
